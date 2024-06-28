@@ -1,35 +1,79 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import validator from "validator";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [showPass, setShowPass] = useState(false);
+  const [passwordState, setPasswordState] = useState("");
+
+  const handleCheckBox = (e) => {
+    setShowPass(e.target.checked);
+  };
+
+  const handlePassInput = (value) => {
+    if (
+      validator.isStrongPassword(value, {
+        minLength: 4,
+        minLowercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+        minUppercase: 1,
+      })
+    )
+      setPasswordState("strong");
+    else setPasswordState("weak");
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="container">
+        <div className="box">
+          <h1>Password Validation</h1>
+          <div className="input-box">
+            <div
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+            >
+              <label
+                htmlFor="checkbox"
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                👀
+                <input
+                  type="checkbox"
+                  id="checkbox"
+                  checked={showPass}
+                  onChange={(e) => handleCheckBox(e)}
+                />
+              </label>
+              {showPass ? (
+                <input
+                  type="text"
+                  placeholder="Enter your password"
+                  onChange={(e) => handlePassInput(e.target.value)}
+                />
+              ) : (
+                <input
+                  type="password"
+                  placeholder="Enter your password"
+                  onChange={(e) => handlePassInput(e.target.value)}
+                />
+              )}
+            </div>
+            {passwordState === "strong" && (
+              <span style={{ color: "#21aeea", fontWeight: 600 }}>
+                Password is strong ✔
+              </span>
+            )}
+            {passwordState === "weak" && (
+              <span style={{ color: "red", fontWeight: 600 }}>
+                Password is weak !
+              </span>
+            )}
+          </div>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
